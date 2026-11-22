@@ -1,0 +1,58 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      POSTGRES_HOST: ${PGHOST:-}
+      POSTGRES_PORT: ${PGPORT:-5432}
+      POSTGRES_DATABASE: ${PGDATABASE:-}
+      POSTGRES_USER: ${PGUSER:-}
+      POSTGRES_PASSWORD: ${PGPASSWORD:-}
+    restart: unless-stopped
+
+  dev-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      POSTGRES_HOST: test-db
+      POSTGRES_PORT: 5432
+      POSTGRES_DATABASE: placecount_test_run
+      POSTGRES_USER: placecount_test
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      test-db:
+        condition: service_healthy
+    profiles: ["test"]
+
+  test-db:
+    image: postgres:17-alpine
+    profiles: ["test"]
+    environment:
+      POSTGRES_USER: placecount_test
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U placecount_test -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgres_test_data:
+    name: placecount_postgres_test_data

@@ -1,0 +1,26 @@
+{
+  "name": "placecount",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "yarn@4.9.2",
+  "scripts": {
+    "start": "node app/src/core/index.ts",
+    "test": "sh scripts/with-test-db.sh local node --test",
+    "test:watch": "node scripts/watch-tests.mjs",
+    "typecheck": "tsc --noEmit",
+    "dev:test": "sh scripts/test.sh",
+    "dev:build": "docker compose --profile test build dev-app",
+    "dev:run": "sh scripts/run-dev.sh",
+    "dev:reset-db": "sh scripts/reset-db.sh",
+    "dev:export-test-seed": "sh scripts/export-test-seed.sh"
+  },
+  "workspaces": [
+    "app",
+    "modules"
+  ],
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "5.9.3"
+  }
+}

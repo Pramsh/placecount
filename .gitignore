@@ -1,0 +1,7 @@
+.env*
+node_modules
+.DS_Store
+**/.yarn/install-state.gz
+.vscode/launch.json
+scripts/.test-db-lock/
+scripts/.seed-export.*/
